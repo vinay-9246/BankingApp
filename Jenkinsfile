@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'jappbuildserver1' }	
+    agent { label 'slave1' }	
 
     tools {
         // Install the Maven version configured as "M3" and add it to the path.
@@ -7,15 +7,15 @@ pipeline {
     }
 
 	environment {	
-		DOCKERHUB_CREDENTIALS=credentials('dockerloginid')
+		DOCKERHUB_CREDENTIALS=credentials('sadockerlogin')
 	} 
     
     stages {
         stage('SCM Checkout') {
             steps {
-                // Get some code from a GitHub repository
-                git 'https://github.com/LoksaiETA/BankingApp.git'
-                //git 'https://github.com/LoksaiETA/Java-mvn-app2.git'
+               
+                git 'https://github.com/vinay-9246/BankingApp.git'
+                
             }
 		}
         stage('Maven Build') {
@@ -27,9 +27,9 @@ pipeline {
        stage("Docker build"){
             steps {
 				sh 'docker version'
-				sh "docker build -t loksaieta/bankapp-eta-app:${BUILD_NUMBER} ."
+				sh "docker build -t vinay9246/bankapp-eta-app:${BUILD_NUMBER} ."
 				sh 'docker image list'
-				sh "docker tag loksaieta/bankapp-eta-app:${BUILD_NUMBER} loksaieta/bankapp-eta-app:latest"
+				sh "docker tag vinay9246/bankapp-eta-app:${BUILD_NUMBER} vinay9246/bankapp-eta-app:latest"
             }
         }
 		stage('Login2DockerHub') {
@@ -41,7 +41,7 @@ pipeline {
 		stage('Push2DockerHub') {
 
 			steps {
-				sh "docker push loksaieta/bankapp-eta-app:latest"
+				sh "docker push vinay9246/bankapp-eta-app:latest"
 			}
 		}
         stage('Deploy to Kubernetes Dev Environment') {
